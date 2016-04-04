@@ -1,0 +1,29 @@
+{
+  "name": "@mh-con/systemd-simple-api",
+  "version": "1.0.0",
+  "description": "Systemd simple api to manage services",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "test-fedora": "sh ./mocha.sh"
+  },
+  "keywords": [
+    "service",
+    "systemd"
+  ],
+  "author": "mh-cbon <mh-cbon@users.noreply.github.com>",
+  "license": "MIT",
+  "dependencies": {
+    "byline": "^4.2.1",
+    "debug": "^2.2.0",
+    "fs-extra": "^0.26.7",
+    "split": "^1.0.0",
+    "through2": "^2.0.1"
+  },
+  "devDependencies": {
+    "should": "^8.3.0"
+  }
+}

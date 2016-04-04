@@ -1,0 +1,101 @@
+var should = require('should');
+var fs = require('fs');
+var SystemdSimpleApi = require('../index.js');
+
+describe('systemd-simple-api', function() {
+  it('lists services', function(done) {
+    var sds = new SystemdSimpleApi();
+    sds.list({}, function (err, list) {
+      (err===undefined).should.be.true;
+      ('local-fs.target' in list).should.be.true;
+      (list['local-fs.target'].isLoaded).should.eql('loaded');
+      (list['local-fs.target'].isActive).should.eql('active');
+      (list['local-fs.target'].sub).should.eql('active');
+      (list['local-fs.target'].description).should.eql('Local File Systems');
+      done();
+    })
+  });
+  it('lists units', function(done) {
+    var sds = new SystemdSimpleApi();
+    sds.listUnitFiles({}, function (err, list) {
+      (err===undefined).should.be.true;
+      ('dbus' in list).should.be.true;
+      (list['dbus'].id).should.eql('dbus');
+      (list['dbus'].state).should.eql('static');
+      done();
+    })
+  });
+  it('describes a service', function(done) {
+    var sds = new SystemdSimpleApi();
+    sds.describe('dbus', {}, function (err, unit) {
+      (err===undefined).should.be.true;
+      (unit['Type']).should.eql('simple');
+      done();
+    })
+  });
+  it('installs an unit', function(done) {
+    var sds = new SystemdSimpleApi();
+    var service = {
+      unit: {
+
+      },
+      service: {
+        ExecStart: 'sh -c "echo hello"',
+        ExecReload: 'sh -c "echo hello"'
+      }
+    }
+    sds.install({user: true, id: 'some', properties: service}, function (err) {
+      (err===undefined).should.be.true;
+      fs.access('/home/vagrant/.config/systemd/user/some.service', fs.R_OK, function (err) {
+        (err===undefined).should.be.true;
+        fs.readFile('/home/vagrant/.config/systemd/user/some.service', function (err, content) {
+          (err===undefined).should.be.true;
+          content.toString().should.match(/Unit/)
+          content.toString().should.match(/Service/)
+          done();
+        })
+      })
+    })
+  });
+
+  it('starts a service', function(done) {
+    var sds = new SystemdSimpleApi();
+    sds.start('some', {}, function (err) {
+      (err===undefined).should.be.true;
+      done();
+    })
+  });
+
+  it('restarts a service', function(done) {
+    var sds = new SystemdSimpleApi();
+    sds.start('some', {}, function (err) {
+      (err===undefined).should.be.true;
+      done();
+    })
+  });
+
+  it('reloads a service', function(done) {
+    var sds = new SystemdSimpleApi();
+    sds.start('some', {}, function (err) {
+      (err===undefined).should.be.true;
+      done();
+    })
+  });
+
+  it('reloads-or-restarts a service', function(done) {
+    var sds = new SystemdSimpleApi();
+    sds.start('some', {}, function (err) {
+      (err===undefined).should.be.true;
+      done();
+    })
+  });
+
+  it('stops a service', function(done) {
+    var sds = new SystemdSimpleApi();
+    sds.start('some', {}, function (err) {
+      (err===undefined).should.be.true;
+      done();
+    })
+  });
+
+});
