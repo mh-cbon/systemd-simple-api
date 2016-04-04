@@ -89,6 +89,11 @@ sds.install({user: !true, id: 'fake', properties: service}, done)
 sds.uninstall({user: !true, id: 'fake', properties: service}, done)
 ```
 
+## Run the tests
+
+- install vagrant
+- run `npm run test-fedora`
+
 # Read more
 
 - https://www.digitalocean.com/community/tutorials/understanding-systemd-units-and-unit-files
