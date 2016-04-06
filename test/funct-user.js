@@ -21,14 +21,14 @@ describe('systemd-simple-api userland', function() {
     sds.listUnitFiles({user: true}, function (err, list) {
       ('fake' in list).should.be.true;
       list['fake'].id.should.eql('fake');
-      done();
+      done(err);
     })
   });
 
   it('should start the fake service', function(done) {
-    sds.start('fake', {user: true}, function () {
+    sds.start('fake', {user: true}, function (err) {
       setTimeout(function(){
-        done();
+        done(err);
       }, 500); // this is needed for the system to load and start the program.
     })
   });
@@ -37,7 +37,7 @@ describe('systemd-simple-api userland', function() {
     sds.list({user: true, type: 'service', all: true}, function (err, list) {
       ('fake' in list).should.be.true;
       list['fake'].description.should.eql('fake service');
-      done();
+      done(err);
     })
   });
 

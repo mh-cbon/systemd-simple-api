@@ -21,14 +21,14 @@ describe('systemd-simple-api rootland', function() {
     sds.listUnitFiles({}, function (err, list) {
       ('fakesys' in list).should.be.true;
       list['fakesys'].id.should.eql('fakesys');
-      done();
+      done(err);
     })
   });
 
   it('should start the fakesys service', function(done) {
-    sds.start('fakesys', {}, function () {
+    sds.start('fakesys', {}, function (err) {
       setTimeout(function(){
-        done();
+        done(err);
       }, 500); // this is needed for the system to load and start the program.
     })
   });
@@ -37,7 +37,7 @@ describe('systemd-simple-api rootland', function() {
     sds.list({type: 'service', all: true}, function (err, list) {
       ('fakesys' in list).should.be.true;
       list['fakesys'].description.should.eql('fakesys service');
-      done();
+      done(err);
     })
   });
 
