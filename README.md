@@ -31,28 +31,28 @@ sds.listUnitFiles(opts={user: true}, function (err, items) {
 })
 
 // systemctl show serviceId --user
-sds.describe('serviceId', opts={user: true}, function (err, items) {
-  console.log(items);
+sds.describe('serviceId', opts={user: true}, function (err, info) {
+  console.log(info);
 })
 
 // systemctl start serviceId --user
-sds.start('serviceId', opts={user: true}, function (err, items) {
-  console.log(items);
+sds.start('serviceId', opts={user: true}, function (err) {
+  console.log(err);
 })
 
 // systemctl stop serviceId --user
-sds.stop('serviceId', opts={user: true}, function (err, items) {
-  console.log(items);
+sds.stop('serviceId', opts={user: true}, function (err) {
+  console.log(err);
 })
 
 // systemctl reload serviceId --user
-sds.reload(opts={user: true}, function (err, items) {
-  console.log(items);
+sds.reload(opts={user: true}, function (err) {
+  console.log(err);
 })
 
 // systemctl reload-or-restart serviceId --user
-sds.reloadOrRestart(opts={user: true}, function (err, items) {
-  console.log(items);
+sds.reloadOrRestart(opts={user: true}, function (err) {
+  console.log(err);
 })
 
 ```
