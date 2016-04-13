@@ -6,8 +6,8 @@ describe('systemd-simple-api', function() {
   it('lists services', function(done) {
     var sds = new SystemdSimpleApi();
     sds.list({}, function (err, list) {
-      (err===undefined).should.be.true;
-      ('local-fs.target' in list).should.be.true;
+      (err===null).should.eql(true);
+      ('local-fs.target' in list).should.eql(true);
       (list['local-fs.target'].isLoaded).should.eql('loaded');
       (list['local-fs.target'].isActive).should.eql('active');
       (list['local-fs.target'].sub).should.eql('active');
@@ -18,8 +18,8 @@ describe('systemd-simple-api', function() {
   it('lists units', function(done) {
     var sds = new SystemdSimpleApi();
     sds.listUnitFiles({}, function (err, list) {
-      (err===undefined).should.be.true;
-      ('dbus' in list).should.be.true;
+      (err===null).should.eql(true);
+      ('dbus' in list).should.eql(true);
       (list['dbus'].id).should.eql('dbus');
       (list['dbus'].state).should.eql('static');
       done();
@@ -28,7 +28,7 @@ describe('systemd-simple-api', function() {
   it('describes a service', function(done) {
     var sds = new SystemdSimpleApi();
     sds.describe('dbus', {}, function (err, unit) {
-      (err===undefined).should.be.true;
+      (err===null).should.eql(true);
       (unit['Type']).should.eql('simple');
       done();
     })
@@ -45,11 +45,11 @@ describe('systemd-simple-api', function() {
       }
     }
     sds.install({user: true, id: 'some', properties: service}, function (err) {
-      (err===undefined).should.be.true;
+      (err===null).should.eql(true);
       fs.access('/home/vagrant/.config/systemd/user/some.service', fs.R_OK, function (err) {
-        (err===undefined).should.be.true;
+        (err===null).should.eql(true);
         fs.readFile('/home/vagrant/.config/systemd/user/some.service', function (err, content) {
-          (err===undefined).should.be.true;
+          (err===null).should.eql(true);
           content.toString().should.match(/Unit/)
           content.toString().should.match(/Service/)
           done();
@@ -61,7 +61,7 @@ describe('systemd-simple-api', function() {
   it('starts a service', function(done) {
     var sds = new SystemdSimpleApi();
     sds.start('some', {}, function (err) {
-      (err===undefined).should.be.true;
+      (err===null).should.eql(true);
       done();
     })
   });
@@ -69,7 +69,7 @@ describe('systemd-simple-api', function() {
   it('restarts a service', function(done) {
     var sds = new SystemdSimpleApi();
     sds.start('some', {}, function (err) {
-      (err===undefined).should.be.true;
+      (err===null).should.eql(true);
       done();
     })
   });
@@ -77,7 +77,7 @@ describe('systemd-simple-api', function() {
   it('reloads a service', function(done) {
     var sds = new SystemdSimpleApi();
     sds.start('some', {}, function (err) {
-      (err===undefined).should.be.true;
+      (err===null).should.eql(true);
       done();
     })
   });
@@ -85,7 +85,7 @@ describe('systemd-simple-api', function() {
   it('reloads-or-restarts a service', function(done) {
     var sds = new SystemdSimpleApi();
     sds.start('some', {}, function (err) {
-      (err===undefined).should.be.true;
+      (err===null).should.eql(true);
       done();
     })
   });
@@ -93,7 +93,7 @@ describe('systemd-simple-api', function() {
   it('stops a service', function(done) {
     var sds = new SystemdSimpleApi();
     sds.start('some', {}, function (err) {
-      (err===undefined).should.be.true;
+      (err===null).should.eql(true);
       done();
     })
   });

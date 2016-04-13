@@ -19,7 +19,7 @@ describe('systemd-simple-api rootland', function() {
 
   it('should list the fakesys service unit file', function(done) {
     sds.listUnitFiles({}, function (err, list) {
-      ('fakesys' in list).should.be.true;
+      ('fakesys' in list).should.eql(true);
       list['fakesys'].id.should.eql('fakesys');
       done(err);
     })
@@ -35,7 +35,7 @@ describe('systemd-simple-api rootland', function() {
 
   it('should list the fakesys service', function(done) {
     sds.list({type: 'service', all: true}, function (err, list) {
-      ('fakesys' in list).should.be.true;
+      ('fakesys' in list).should.eql(true);
       list['fakesys'].description.should.eql('fakesys service');
       done(err);
     })

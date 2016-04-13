@@ -19,7 +19,7 @@ describe('systemd-simple-api userland', function() {
 
   it('should list the fake service unit file', function(done) {
     sds.listUnitFiles({user: true}, function (err, list) {
-      ('fake' in list).should.be.true;
+      ('fake' in list).should.eql(true);
       list['fake'].id.should.eql('fake');
       done(err);
     })
@@ -35,7 +35,7 @@ describe('systemd-simple-api userland', function() {
 
   it('should list the fake service', function(done) {
     sds.list({user: true, type: 'service', all: true}, function (err, list) {
-      ('fake' in list).should.be.true;
+      ('fake' in list).should.eql(true);
       list['fake'].description.should.eql('fake service');
       done(err);
     })
