@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Systemd-simple-api by mh-cbon</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Systemd-simple-api</h1>
+      <h2 class="project-tagline">Simple api for node to manage services via systemd</h2>
+      <a href="https://github.com/mh-cbon/systemd-simple-api" class="btn">View on GitHub</a>
+      <a href="https://github.com/mh-cbon/systemd-simple-api/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/mh-cbon/systemd-simple-api/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="systemd-simple-api" class="anchor" href="#systemd-simple-api" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>systemd-simple-api</h1>
+
+<p>Simple api for node to interface with systemd bin.</p>
+
+<h1>
+<a id="install" class="anchor" href="#install" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Install</h1>
+
+<pre><code>npm i @mh-cbon/systemd-simple-api --save
+</code></pre>
+
+<h1>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage</h1>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> SystemdSimpleApi <span class="pl-k">=</span> <span class="pl-c1">require</span>(<span class="pl-s"><span class="pl-pds">'</span>@mh-cbon/systemd-simple-api<span class="pl-pds">'</span></span>);
+<span class="pl-k">var</span> sds <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-en">SystemdSimpleApi</span>(<span class="pl-c">/* version */</span>);
+
+<span class="pl-c">// systemctl --user -t service --all</span>
+<span class="pl-smi">sds</span>.<span class="pl-en">list</span>(opts<span class="pl-k">=</span>{user<span class="pl-k">:</span> <span class="pl-c1">true</span>, t<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>service<span class="pl-pds">'</span></span>, all<span class="pl-k">:</span> <span class="pl-c1">true</span>}, <span class="pl-k">function</span> (<span class="pl-smi">err</span>, <span class="pl-smi">items</span>) {
+  <span class="pl-en">console</span>.<span class="pl-c1">log</span>(items);
+})
+
+<span class="pl-c">// systemctl -t timers</span>
+<span class="pl-smi">sds</span>.<span class="pl-en">list</span>(opts<span class="pl-k">=</span>{t<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>timers<span class="pl-pds">'</span></span>}, <span class="pl-k">function</span> (<span class="pl-smi">err</span>, <span class="pl-smi">items</span>) {
+  <span class="pl-en">console</span>.<span class="pl-c1">log</span>(items);
+})
+
+<span class="pl-c">// systemctl list-unit-files --user</span>
+<span class="pl-smi">sds</span>.<span class="pl-en">listUnitFiles</span>(opts<span class="pl-k">=</span>{user<span class="pl-k">:</span> <span class="pl-c1">true</span>}, <span class="pl-k">function</span> (<span class="pl-smi">err</span>, <span class="pl-smi">items</span>) {
+  <span class="pl-en">console</span>.<span class="pl-c1">log</span>(items);
+})
+
+<span class="pl-c">// systemctl show serviceId --user</span>
+<span class="pl-smi">sds</span>.<span class="pl-en">describe</span>(<span class="pl-s"><span class="pl-pds">'</span>serviceId<span class="pl-pds">'</span></span>, opts<span class="pl-k">=</span>{user<span class="pl-k">:</span> <span class="pl-c1">true</span>}, <span class="pl-k">function</span> (<span class="pl-smi">err</span>, <span class="pl-smi">info</span>) {
+  <span class="pl-en">console</span>.<span class="pl-c1">log</span>(info);
+})
+
+<span class="pl-c">// systemctl start serviceId --user</span>
+<span class="pl-smi">sds</span>.<span class="pl-c1">start</span>(<span class="pl-s"><span class="pl-pds">'</span>serviceId<span class="pl-pds">'</span></span>, opts<span class="pl-k">=</span>{user<span class="pl-k">:</span> <span class="pl-c1">true</span>}, <span class="pl-k">function</span> (<span class="pl-smi">err</span>) {
+  <span class="pl-en">console</span>.<span class="pl-c1">log</span>(err);
+})
+
+<span class="pl-c">// systemctl stop serviceId --user</span>
+<span class="pl-smi">sds</span>.<span class="pl-c1">stop</span>(<span class="pl-s"><span class="pl-pds">'</span>serviceId<span class="pl-pds">'</span></span>, opts<span class="pl-k">=</span>{user<span class="pl-k">:</span> <span class="pl-c1">true</span>}, <span class="pl-k">function</span> (<span class="pl-smi">err</span>) {
+  <span class="pl-en">console</span>.<span class="pl-c1">log</span>(err);
+})
+
+<span class="pl-c">// systemctl reload serviceId --user</span>
+<span class="pl-smi">sds</span>.<span class="pl-c1">reload</span>(opts<span class="pl-k">=</span>{user<span class="pl-k">:</span> <span class="pl-c1">true</span>}, <span class="pl-k">function</span> (<span class="pl-smi">err</span>) {
+  <span class="pl-en">console</span>.<span class="pl-c1">log</span>(err);
+})
+
+<span class="pl-c">// systemctl reload-or-restart serviceId --user</span>
+<span class="pl-smi">sds</span>.<span class="pl-en">reloadOrRestart</span>(opts<span class="pl-k">=</span>{user<span class="pl-k">:</span> <span class="pl-c1">true</span>}, <span class="pl-k">function</span> (<span class="pl-smi">err</span>) {
+  <span class="pl-en">console</span>.<span class="pl-c1">log</span>(err);
+})
+</pre></div>
+
+<h2>
+<a id="install-a-service" class="anchor" href="#install-a-service" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Install a service</h2>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-c">// per user</span>
+<span class="pl-k">var</span> service <span class="pl-k">=</span> {
+  install<span class="pl-k">:</span>{},
+  unit<span class="pl-k">:</span> {
+    Description<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>your service<span class="pl-pds">"</span></span>
+  },
+  service<span class="pl-k">:</span> {
+    ExecStart<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>/bin/sh ...<span class="pl-pds">'</span></span>
+  }
+}
+<span class="pl-smi">sds</span>.<span class="pl-en">install</span>({user<span class="pl-k">:</span> <span class="pl-c1">true</span>, id<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>fake<span class="pl-pds">'</span></span>, properties<span class="pl-k">:</span> service}, done)
+
+<span class="pl-c">// system wide</span>
+<span class="pl-k">var</span> service <span class="pl-k">=</span> {
+  install<span class="pl-k">:</span>{},
+  unit<span class="pl-k">:</span> {
+    Description<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>your service<span class="pl-pds">"</span></span>
+  },
+  service<span class="pl-k">:</span> {
+    ExecStart<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>/bin/sh ...<span class="pl-pds">'</span></span>
+  }
+}
+<span class="pl-smi">sds</span>.<span class="pl-en">install</span>({user<span class="pl-k">:</span> <span class="pl-k">!</span><span class="pl-c1">true</span>, id<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>fake<span class="pl-pds">'</span></span>, properties<span class="pl-k">:</span> service}, done)
+
+
+<span class="pl-c">// later...</span>
+<span class="pl-smi">sds</span>.<span class="pl-en">uninstall</span>({user<span class="pl-k">:</span> <span class="pl-k">!</span><span class="pl-c1">true</span>, id<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>fake<span class="pl-pds">'</span></span>, properties<span class="pl-k">:</span> service}, done)</pre></div>
+
+<h2>
+<a id="run-the-tests" class="anchor" href="#run-the-tests" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Run the tests</h2>
+
+<ul>
+<li>install vagrant</li>
+<li>run <code>npm run test-fedora</code>
+</li>
+</ul>
+
+<h1>
+<a id="read-more" class="anchor" href="#read-more" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Read more</h1>
+
+<ul>
+<li><a href="https://www.digitalocean.com/community/tutorials/understanding-systemd-units-and-unit-files">https://www.digitalocean.com/community/tutorials/understanding-systemd-units-and-unit-files</a></li>
+<li><a href="https://www.digitalocean.com/community/tutorials/how-to-use-systemctl-to-manage-systemd-services-and-units">https://www.digitalocean.com/community/tutorials/how-to-use-systemctl-to-manage-systemd-services-and-units</a></li>
+<li><a href="https://www.freedesktop.org/software/systemd/man/systemd.unit.html#id-1.7.4">https://www.freedesktop.org/software/systemd/man/systemd.unit.html#id-1.7.4</a></li>
+<li><a href="https://www.freedesktop.org/software/systemd/man/systemd.service.html#">https://www.freedesktop.org/software/systemd/man/systemd.service.html#</a></li>
+<li><a href="https://www.freedesktop.org/software/systemd/man/systemd.exec.html#">https://www.freedesktop.org/software/systemd/man/systemd.exec.html#</a></li>
+<li><a href="https://www.freedesktop.org/software/systemd/man/systemd.kill.html#">https://www.freedesktop.org/software/systemd/man/systemd.kill.html#</a></li>
+<li><a href="https://fedoraproject.org/wiki/SysVinit_to_Systemd_Cheatsheet">https://fedoraproject.org/wiki/SysVinit_to_Systemd_Cheatsheet</a></li>
+</ul>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/mh-cbon/systemd-simple-api">Systemd-simple-api</a> is maintained by <a href="https://github.com/mh-cbon">mh-cbon</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
