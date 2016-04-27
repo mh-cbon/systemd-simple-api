@@ -97,7 +97,7 @@ function systemdSimpleApi (version) {
   }
 
   this.describe = function (serviceId, opts, then) {
-    var properties = {};
+    var properties = [];
 
     var args = processListArgs(opts || {});
     args.unshift(serviceId)
@@ -116,7 +116,10 @@ function systemdSimpleApi (version) {
     .pipe(split())
     .pipe(through2(function (chunk, enc, callback) {
       var k = chunk.toString().split(/^([^=]+)=(.+)/g);
-      k && k[1] && (properties[k[1].replace(/\.service/, '')] = k[2]);
+      k && k[1] && properties.push({
+        name: k[1].replace(/\.service/, ''),
+        value: k[2]
+      })
       callback(null, chunk)
     }));
   }
@@ -184,22 +187,22 @@ function systemdSimpleApi (version) {
     var content = '';
     if (properties.install) {
       content += '\n[Install]\n'
-      Object.keys(properties.install).forEach(function (key) {
-        content += key + '=' + properties.unit[key] + '\n'
+      properties.install.forEach(function (prop) {
+        content += prop.name + '=' + prop.value + '\n'
       })
       content += '\n'
     }
     if (properties.unit) {
       content += '\n[Unit]\n'
-      Object.keys(properties.unit).forEach(function (key) {
-        content += key + '=' + properties.unit[key] + '\n'
+      properties.unit.forEach(function (prop) {
+        content += prop.name + '=' + prop.value + '\n'
       })
       content += '\n'
     }
     if (properties.service) {
       content += '\n[Service]\n'
-      Object.keys(properties.service).forEach(function (key) {
-        content += key + '=' + properties.service[key] + '\n'
+      properties.service.forEach(function (prop) {
+        content += prop.name + '=' + prop.value + '\n'
       })
       content += '\n'
     }

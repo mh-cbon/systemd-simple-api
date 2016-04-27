@@ -6,13 +6,19 @@ describe('systemd-simple-api rootland', function() {
   var sds = new SystemdSimpleApi();
   it('should install the fakesys service', function(done) {
     var service = {
-      install:{},
-      unit: {
-        Description: "fakesys service"
-      },
-      service: {
-        ExecStart: '/bin/sh -c "/home/vagrant/node/node-v5.9.1-linux-x64/bin/node /vagrant/utils/fake-service.js"'
-      }
+      install: [],
+      unit: [
+        {
+          name: 'Description',
+          value: 'fakesys service'
+        }
+      ],
+      service: [
+        {
+          name: 'ExecStart',
+          value: '/bin/sh -c "/home/vagrant/node/node-v5.9.1-linux-x64/bin/node /vagrant/utils/fake-service.js"'
+        }
+      ]
     }
     sds.install({id: 'fakesys', properties: service}, done)
   });

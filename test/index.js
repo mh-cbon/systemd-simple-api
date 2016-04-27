@@ -28,21 +28,30 @@ describe('systemd-simple-api', function() {
   it('describes a service', function(done) {
     var sds = new SystemdSimpleApi();
     sds.describe('dbus', {}, function (err, unit) {
+      err && console.error(err);
       (err===null).should.eql(true);
-      (unit['Type']).should.eql('simple');
+      (unit.length).should.not.eql(0);
+      (unit[0].name).should.eql('Type');
+      (unit[0].value).should.eql('simple');
       done();
     })
   });
   it('installs an unit', function(done) {
     var sds = new SystemdSimpleApi();
     var service = {
-      unit: {
+      unit: [
 
-      },
-      service: {
-        ExecStart: 'sh -c "echo hello"',
-        ExecReload: 'sh -c "echo hello"'
-      }
+      ],
+      service: [
+        {
+          name: 'ExecStart',
+          value: 'sh -c "echo hello"'
+        },
+        {
+          name: 'ExecReload',
+          value: 'sh -c "echo hello"'
+        }
+      ]
     }
     sds.install({user: true, id: 'some', properties: service}, function (err) {
       (err===null).should.eql(true);

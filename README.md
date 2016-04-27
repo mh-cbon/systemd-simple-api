@@ -96,6 +96,7 @@ sds.uninstall({user: !true, id: 'fake', properties: service}, done)
 
 # Read more
 
+- https://coreos.com/os/docs/latest/using-environment-variables-in-systemd-units.html
 - https://www.digitalocean.com/community/tutorials/understanding-systemd-units-and-unit-files
 - https://www.digitalocean.com/community/tutorials/how-to-use-systemctl-to-manage-systemd-services-and-units
 - https://www.freedesktop.org/software/systemd/man/systemd.unit.html#id-1.7.4

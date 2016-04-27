@@ -6,13 +6,19 @@ describe('systemd-simple-api userland', function() {
   var sds = new SystemdSimpleApi();
   it('should install the fake service', function(done) {
     var service = {
-      install:{},
-      unit: {
-        Description: "fake service"
-      },
-      service: {
-        ExecStart: '/bin/sh -c "/home/vagrant/node/node-v5.9.1-linux-x64/bin/node /vagrant/utils/fake-service.js"'
-      }
+      install: [],
+      unit: [
+        {
+          name: 'Description',
+          value: 'fake service'
+        }
+      ],
+      service: [
+        {
+          name: 'ExecStart',
+          value: '/bin/sh -c "/home/vagrant/node/node-v5.9.1-linux-x64/bin/node /vagrant/utils/fake-service.js"'
+        }
+      ]
     }
     sds.install({user: true, id: 'fake', properties: service}, done)
   });
