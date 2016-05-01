@@ -55,6 +55,11 @@ sds.reloadOrRestart(opts={user: true}, function (err) {
   console.log(err);
 })
 
+// systemctl daemon-reload
+sds.refresh(function () {
+  console.log('systemd is refreshed')
+})
+
 ```
 
 ## Install a service

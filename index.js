@@ -124,6 +124,11 @@ function systemdSimpleApi (version) {
     }));
   }
 
+  this.refresh = function (then) {
+    var child = spawn('systemctl', ['daemon-reload'])
+    child.on('close', then)
+  }
+
 
   var processControlArgs = function (opts) {
     var args = [];
