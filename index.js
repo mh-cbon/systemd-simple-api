@@ -1,6 +1,7 @@
 
 var pkg       = require('./package.json')
 var spawn     = require('child_process').spawn;
+var yasudo    = require('@mh-cbon/yasudo')
 var debug     = require('debug')(pkg.name);
 var split     = require('split');
 var path      = require('path');
@@ -9,6 +10,20 @@ var through2  = require('through2');
 
 
 function systemdSimpleApi (version) {
+
+  var pwd = false;
+  this.enableElevation = function (p) {
+    pwd = p;
+  }
+
+  var spawnAChild = function (bin, args, opts) {
+    if (pwd!==false) {
+      opts = opts || {};
+      opts.password = pwd;
+      return yasudo(bin, args, opts);
+    }
+    return spawn(bin, args, opts);
+  }
 
   var processListArgs = function (opts) {
     var args = [];
@@ -26,9 +41,9 @@ function systemdSimpleApi (version) {
 
     debug("systemctl %s", args.join(' '))
 
-    var c = spawn('systemctl', args, {stdio: 'pipe'});
+    var c = spawnAChild('systemctl', args, {stdio: 'pipe'});
 
-    c.stdout.on('close', function () {
+    c.stdout.on('end', function () {
       if (then) then(null, results);
       then = null;
     })
@@ -125,8 +140,14 @@ function systemdSimpleApi (version) {
   }
 
   this.refresh = function (then) {
-    var child = spawn('systemctl', ['daemon-reload'])
-    child.on('close', then)
+    var child = spawnAChild('systemctl', ['daemon-reload'])
+    child.on('error', function (err) {
+      then && then(err)
+      then = null;
+    })
+    child.on('close', function () {
+      then && then();
+    })
   }
 
 
@@ -141,9 +162,9 @@ function systemdSimpleApi (version) {
 
     debug("systemctl %s", args.join(' '))
 
-    var c = spawn('systemctl', args, {stdio: 'pipe'});
+    var c = spawnAChild('systemctl', args, {stdio: 'pipe'});
 
-    c.stdout.on('close', function (code) {
+    c.stdout.on('end', function (code) {
       if (then) then(code>0 ? 'error': null);
       then = null;
     })
@@ -227,12 +248,29 @@ function systemdSimpleApi (version) {
     // https://www.freedesktop.org/software/systemd/man/systemd.unit.html#id-1.7.4
     var installPath = getUnitsPath(opts.user || opts.u);
 
-    fs.mkdirs(installPath, function (err) {
-      if (err) return then(err)
-
-      var unitContent = generateUnitContent(opts.properties)
-      var unitPath = path.join(installPath, opts.id.replace(/\.service$/, '') + '.service')
-      fs.writeFile(unitPath, unitContent, then)
+    var mkdir = spawnAChild('mkdir', ['-p', installPath]);
+    mkdir.on('error', function (err) {
+      then && then(err);
+      then = null;
+    })
+    mkdir.on('close', function (code) {
+      if (then) {
+        var unitContent = generateUnitContent(opts.properties)
+        var unitPath = path.join(installPath, opts.id.replace(/\.service$/, '') + '.service')
+        var write = spawnAChild(process.argv[0], ['node_modules/.bin/fwrite', unitPath, '-v']);
+        write.stdin.end(unitContent);
+        var stdout = '';
+        var stderr = '';
+        write.stdout.on('data', function (d) {stdout+=''+d;})
+        write.stderr.on('data', function (d) {stderr+=''+d;})
+        write.on('error', function (err) {
+          then && then(err);
+          then = null;
+        })
+        write.on('close', function (code) {
+          then && then(code===0 ? null : stdout+stderr);
+        })
+      }
     })
   }
 
@@ -240,7 +278,14 @@ function systemdSimpleApi (version) {
     var installPath = getUnitsPath(opts.user || opts.u);
     var unitPath = path.join(installPath, opts.id.replace(/\.service$/, '') + '.service')
 
-    fs.unlink(unitPath, then)
+    var rm = spawnAChild('rm', ['-f', unitPath]);
+    rm.on('error', function (err) {
+      then && then(err);
+      then = null;
+    })
+    rm.on('close', function (code) {
+      then && then();
+    })
   }
 
 }

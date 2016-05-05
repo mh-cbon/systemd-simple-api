@@ -4,6 +4,11 @@ var SystemdSimpleApi = require('../index.js');
 
 describe('systemd-simple-api rootland', function() {
   var sds = new SystemdSimpleApi();
+
+  this.timeout(5000);
+
+  if ('SUDOPWD' in process.env) sds.enableElevation(process.env['SUDOPWD']);
+
   it('should install the fakesys service', function(done) {
     var service = {
       install: [],
@@ -20,11 +25,24 @@ describe('systemd-simple-api rootland', function() {
         }
       ]
     }
-    sds.install({id: 'fakesys', properties: service}, done)
+    sds.install({id: 'fakesys', properties: service}, function (err) {
+      err && console.error(err);
+      (!err).should.eql(true);
+      fs.access('/etc/systemd/system/fakesys.service', fs.R_OK, function (err) {
+        err && console.error(err);
+        (!err).should.eql(true);
+        done();
+      })
+    })
+  });
+
+  it('should reload systemd', function(done) {
+    sds.refresh(done)
   });
 
   it('should list the fakesys service unit file', function(done) {
     sds.listUnitFiles({}, function (err, list) {
+      err && console.error(err);
       ('fakesys' in list).should.eql(true);
       list['fakesys'].id.should.eql('fakesys');
       done(err);
@@ -63,5 +81,13 @@ describe('systemd-simple-api rootland', function() {
 
   it('should stop the fakesys service', function(done) {
     sds.stop('fakesys', {}, done)
+  });
+
+  it('should uninstall the fakesys service', function(done) {
+    sds.uninstall({id: 'fakesys'}, done)
+  });
+
+  it('should reload systemd', function(done) {
+    sds.refresh(done)
   });
 });

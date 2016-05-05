@@ -36,7 +36,7 @@ describe('systemd-simple-api', function() {
       done();
     })
   });
-  it('installs an unit', function(done) {
+  it('installs a unit', function(done) {
     var sds = new SystemdSimpleApi();
     var service = {
       unit: [
@@ -54,11 +54,14 @@ describe('systemd-simple-api', function() {
       ]
     }
     sds.install({user: true, id: 'some', properties: service}, function (err) {
-      (err===null).should.eql(true);
+      err && console.error(err);
+      (!err).should.eql(true);
       fs.access('/home/vagrant/.config/systemd/user/some.service', fs.R_OK, function (err) {
-        (err===null).should.eql(true);
+        err && console.error(err);
+        (!err).should.eql(true);
         fs.readFile('/home/vagrant/.config/systemd/user/some.service', function (err, content) {
-          (err===null).should.eql(true);
+          err && console.error(err);
+          (!err).should.eql(true);
           content.toString().should.match(/Unit/)
           content.toString().should.match(/Service/)
           done();
