@@ -295,16 +295,16 @@ function systemdSimpleApi (version) {
   }
 
   function sudoMkdir (fPath, then) {
-    var rm = spawnAChild('mkdir', ['-p', fPath]);
+    var mkdir = spawnAChild('mkdir', ['-p', fPath]);
     var stdout = '';
     var stderr = '';
-    rm.stdout.on('data', function (d) {stdout+=''+d;})
-    rm.stderr.on('data', function (d) {stderr+=''+d;})
-    rm.on('error', function (err) {
+    mkdir.stdout.on('data', function (d) {stdout+=''+d;})
+    mkdir.stderr.on('data', function (d) {stderr+=''+d;})
+    mkdir.on('error', function (err) {
       then && then(err);
       then = null;
     })
-    rm.on('close', function (code) {
+    mkdir.on('close', function (code) {
       then && then(code!==0 ? stdout+stderr : '');
     })
   }
