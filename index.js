@@ -248,29 +248,11 @@ function systemdSimpleApi (version) {
     // https://www.freedesktop.org/software/systemd/man/systemd.unit.html#id-1.7.4
     var installPath = getUnitsPath(opts.user || opts.u);
 
-    var mkdir = spawnAChild('mkdir', ['-p', installPath]);
-    mkdir.on('error', function (err) {
-      then && then(err);
-      then = null;
-    })
-    mkdir.on('close', function (code) {
-      if (then) {
-        var unitContent = generateUnitContent(opts.properties)
-        var unitPath = path.join(installPath, opts.id.replace(/\.service$/, '') + '.service')
-        var write = spawnAChild(process.argv[0], ['node_modules/.bin/fwrite', unitPath, '-v']);
-        write.stdin.end(unitContent);
-        var stdout = '';
-        var stderr = '';
-        write.stdout.on('data', function (d) {stdout+=''+d;})
-        write.stderr.on('data', function (d) {stderr+=''+d;})
-        write.on('error', function (err) {
-          then && then(err);
-          then = null;
-        })
-        write.on('close', function (code) {
-          then && then(code===0 ? null : stdout+stderr);
-        })
-      }
+    sudoMkdir (installPath, function (err) {
+      if (err) return then(err);
+      var unitContent = generateUnitContent(opts.properties)
+      var unitPath = path.join(installPath, opts.id.replace(/\.service$/, '') + '.service')
+      sudoFsWriteFile(unitPath, unitContent, then)
     })
   }
 
@@ -278,13 +260,52 @@ function systemdSimpleApi (version) {
     var installPath = getUnitsPath(opts.user || opts.u);
     var unitPath = path.join(installPath, opts.id.replace(/\.service$/, '') + '.service')
 
-    var rm = spawnAChild('rm', ['-f', unitPath]);
+    sudoRmFile(unitPath, then)
+  }
+
+  function sudoFsWriteFile (fPath, content, then) {
+    var write = spawnAChild(process.argv[0], ['node_modules/.bin/fwrite', fPath, '-v']);
+    write.stdin.end(content);
+    var stdout = '';
+    var stderr = '';
+    write.stdout.on('data', function (d) {stdout+=''+d;})
+    write.stderr.on('data', function (d) {stderr+=''+d;})
+    write.on('error', function (err) {
+      then && then(err);
+      then = null;
+    })
+    write.on('close', function (code) {
+      then && then(code===0 ? null : stdout+stderr);
+    })
+  }
+
+  function sudoRmFile (fPath, then) {
+    var rm = spawnAChild('rm', ['-f', fPath]);
+    var stdout = '';
+    var stderr = '';
+    rm.stdout.on('data', function (d) {stdout+=''+d;})
+    rm.stderr.on('data', function (d) {stderr+=''+d;})
     rm.on('error', function (err) {
       then && then(err);
       then = null;
     })
     rm.on('close', function (code) {
-      then && then();
+      then && then(code!==0 ? stdout+stderr : '');
+    })
+  }
+
+  function sudoMkdir (fPath, then) {
+    var rm = spawnAChild('mkdir', ['-p', fPath]);
+    var stdout = '';
+    var stderr = '';
+    rm.stdout.on('data', function (d) {stdout+=''+d;})
+    rm.stderr.on('data', function (d) {stderr+=''+d;})
+    rm.on('error', function (err) {
+      then && then(err);
+      then = null;
+    })
+    rm.on('close', function (code) {
+      then && then(code!==0 ? stdout+stderr : '');
     })
   }
 
