@@ -7,7 +7,7 @@ describe('systemd-simple-api rootland', function() {
 
   this.timeout(5000);
 
-  if ('SUDOPWD' in process.env) sds.enableElevation(process.env['SUDOPWD']);
+  sds.enableElevation('');
 
   it('should install the fakesys service', function(done) {
     var service = {
@@ -21,7 +21,7 @@ describe('systemd-simple-api rootland', function() {
       service: [
         {
           name: 'ExecStart',
-          value: '/bin/sh -c "/home/vagrant/node/node-v5.9.1-linux-x64/bin/node /vagrant/utils/fake-service.js"'
+          value: '/bin/sh -c "' + process.argv[0] + ' /vagrant/utils/fake-service.js"'
         }
       ]
     }

@@ -15,6 +15,11 @@ npm i @mh-cbon/systemd-simple-api --save
 var SystemdSimpleApi = require('@mh-cbon/systemd-simple-api');
 var sds = new SystemdSimpleApi(/* version */);
 
+// enable sudo
+sds.enableElevation(''); // will now read the password from yasudo env variable
+sds.enableElevation('the password'); // will now use 'the password'
+sds.enableElevation(false); // will disable use of sudo
+
 // systemctl --user -t service --all
 sds.list(opts={user: true, t: 'service', all: true}, function (err, items) {
   console.log(items);

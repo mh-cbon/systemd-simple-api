@@ -21,8 +21,9 @@
   "author": "mh-cbon <mh-cbon@users.noreply.github.com>",
   "license": "MIT",
   "dependencies": {
+    "@mh-cbon/c-yasudo": "^1.0.1",
+    "@mh-cbon/sudo-fs": "^1.0.1",
     "@mh-cbon/write": "^1.0.1",
-    "@mh-cbon/yasudo": "^1.0.5",
     "byline": "^4.2.1",
     "debug": "^2.2.0",
     "fs-extra": "^0.26.7",
