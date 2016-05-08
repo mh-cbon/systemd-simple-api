@@ -7,7 +7,7 @@ describe('systemd-simple-api rootland', function() {
 
   this.timeout(5000);
 
-  sds.enableElevation('');
+  if('yasudo' in process.env) sds.enableElevation('');
 
   it('should install the fakesys service', function(done) {
     var service = {
