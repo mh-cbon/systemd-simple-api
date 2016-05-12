@@ -1,6 +1,6 @@
 {
   "name": "@mh-cbon/systemd-simple-api",
-  "version": "2.1.3",
+  "version": "2.1.4",
   "description": "Systemd simple api to manage services",
   "main": "index.js",
   "scripts": {
