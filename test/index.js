@@ -6,6 +6,7 @@ describe('systemd-simple-api', function() {
   it('lists services', function(done) {
     var sds = new SystemdSimpleApi();
     sds.list({}, function (err, list) {
+      err && console.error(err);
       (err===null).should.eql(true);
       ('local-fs.target' in list).should.eql(true);
       (list['local-fs.target'].isLoaded).should.eql('loaded');
@@ -18,6 +19,7 @@ describe('systemd-simple-api', function() {
   it('lists units', function(done) {
     var sds = new SystemdSimpleApi();
     sds.listUnitFiles({}, function (err, list) {
+      err && console.error(err);
       (err===null).should.eql(true);
       ('dbus' in list).should.eql(true);
       (list['dbus'].id).should.eql('dbus');
@@ -45,11 +47,11 @@ describe('systemd-simple-api', function() {
       service: [
         {
           name: 'ExecStart',
-          value: 'sh -c "echo hello"'
+          value: '/bin/sh -c "echo hello"'
         },
         {
           name: 'ExecReload',
-          value: 'sh -c "echo hello"'
+          value: '/bin/sh -c "echo hello"'
         }
       ]
     }
@@ -72,7 +74,8 @@ describe('systemd-simple-api', function() {
 
   it('starts a service', function(done) {
     var sds = new SystemdSimpleApi();
-    sds.start('some', {}, function (err) {
+    sds.start('some', {user: true}, function (err) {
+      err && console.error(err);
       (err===null).should.eql(true);
       done();
     })
@@ -80,7 +83,8 @@ describe('systemd-simple-api', function() {
 
   it('restarts a service', function(done) {
     var sds = new SystemdSimpleApi();
-    sds.start('some', {}, function (err) {
+    sds.start('some', {user: true}, function (err) {
+      err && console.error(err);
       (err===null).should.eql(true);
       done();
     })
@@ -88,7 +92,8 @@ describe('systemd-simple-api', function() {
 
   it('reloads a service', function(done) {
     var sds = new SystemdSimpleApi();
-    sds.start('some', {}, function (err) {
+    sds.start('some', {user: true}, function (err) {
+      err && console.error(err);
       (err===null).should.eql(true);
       done();
     })
@@ -96,7 +101,8 @@ describe('systemd-simple-api', function() {
 
   it('reloads-or-restarts a service', function(done) {
     var sds = new SystemdSimpleApi();
-    sds.start('some', {}, function (err) {
+    sds.start('some', {user: true}, function (err) {
+      err && console.error(err);
       (err===null).should.eql(true);
       done();
     })
@@ -104,7 +110,8 @@ describe('systemd-simple-api', function() {
 
   it('stops a service', function(done) {
     var sds = new SystemdSimpleApi();
-    sds.start('some', {}, function (err) {
+    sds.start('some', {user: true}, function (err) {
+      err && console.error(err);
       (err===null).should.eql(true);
       done();
     })

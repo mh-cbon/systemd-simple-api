@@ -176,8 +176,17 @@ function systemdSimpleApi (version) {
 
     var c = spawnAChild('systemctl', args, {stdio: 'pipe'});
 
-    c.stdout.on('end', function (code) {
-      if (then) then(code>0 ? 'error': null);
+    var stdout = '';
+    var stderr = '';
+    c.stdout.on('data', function (data) {
+      stdout += data.toString();
+    })
+    c.stderr.on('data', function (data) {
+      stderr += data.toString();
+    })
+
+    c.on('close', function (code) {
+      if (then) then(code!==0 ? stdout+stderr : null);
       then = null;
     })
     c.on('error', function (err) {
