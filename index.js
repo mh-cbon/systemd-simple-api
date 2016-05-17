@@ -8,6 +8,7 @@ var path      = require('path');
 var fs        = require('fs-extra');
 var sudoFs    = require('@mh-cbon/sudo-fs')
 var through2  = require('through2');
+var dStream   = require('debug-stream')(debug)
 
 
 function systemdSimpleApi (version) {
@@ -63,6 +64,8 @@ function systemdSimpleApi (version) {
       if (then) then(err, results);
       then = null;
     });
+    c.stdout.pipe(dStream('process.stdout: %s').resume());
+    c.stderr.pipe(dStream('process.stderr: %s').resume());
 
     return c;
   }
@@ -152,7 +155,7 @@ function systemdSimpleApi (version) {
   }
 
   this.refresh = function (then) {
-    var child = spawnAChild('systemctl', ['daemon-reload'])
+    var child = spawnAChild('systemctl', ['daemon-reload'], {stdio: 'pipe'})
     child.on('error', function (err) {
       then && then(err)
       then = null;
@@ -160,6 +163,8 @@ function systemdSimpleApi (version) {
     child.on('close', function () {
       then && then();
     })
+    child.stdout.pipe(dStream('process.stdout: %s').resume());
+    child.stderr.pipe(dStream('process.stderr: %s').resume());
   }
 
 
@@ -193,6 +198,8 @@ function systemdSimpleApi (version) {
       if (then) then(err);
       then = null;
     });
+    c.stdout.pipe(dStream('process.stdout: %s').resume());
+    c.stderr.pipe(dStream('process.stderr: %s').resume());
 
     return c;
   }
@@ -217,6 +224,18 @@ function systemdSimpleApi (version) {
   this.reload = function (serviceId, opts, then) {
     return runSystemCtlControls(
       [].concat(['reload', serviceId], processControlArgs(opts)),
+      then
+    )
+  }
+  this.enable = function (serviceId, opts, then) {
+    return runSystemCtlControls(
+      [].concat(['enable', serviceId], processControlArgs(opts)),
+      then
+    )
+  }
+  this.disable = function (serviceId, opts, then) {
+    return runSystemCtlControls(
+      [].concat(['disable', serviceId], processControlArgs(opts)),
       then
     )
   }
